@@ -139,7 +139,6 @@ import DangerButton from "@/Components/DangerButton.vue";
 import DarkButton from "@/Components/DarkButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import BaseButton from "@/Components/BaseButton.vue";
-import TableComponent from "@/Components/TableComponent/TableComponent.vue";
 import BaseTable from "@/Components/TableComponent/BaseTable.vue";
 
 // function handleClick() {
