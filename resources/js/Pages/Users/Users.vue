@@ -72,74 +72,99 @@ form {
             </div>
 
             <div class="mt-4">
-                <BaseTable :columns="userColumns" :data="users">
-                    <!-- Roles column -->
-                    <template #roles="{ row }">
-                        <span
-                            v-for="role in row.roles"
-                            :key="role.id"
-                            class="mr-1 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded"
-                        >
-                            {{ role.name }}
-                        </span>
-                    </template>
+                <base-table>
+                    <table-header>
+                        <table-header-row>
+                            <table-header-item>User Name</table-header-item>
+                            <table-header-item>Email</table-header-item>
+                            <table-header-item>Roles</table-header-item>
 
-                    <!-- Online/Offline status -->
-                    <template #is_online="{ row }">
-                        <span
-                            v-if="row.is_online"
-                            class="text-green-600 font-bold"
-                            >Online</span
-                        >
-                        <span v-else class="text-gray-400 font-bold"
-                            >Offline</span
-                        >
-                    </template>
+                            <table-header-item v-if="can('users.status')">
+                                Status
+                            </table-header-item>
+                            <table-header-item v-if="can('users.block_status')">
+                                Block Status
+                            </table-header-item>
 
-                    <!-- Block toggle -->
-                    <template #is_blocked="{ row }">
-                        <label
-                            class="ms-2 inline-flex items-center cursor-pointer"
-                        >
-                            <input
-                                type="checkbox"
-                                class="sr-only peer"
-                                :checked="!row.is_blocked"
-                                :disabled="
-                                    row.roles.some(
-                                        (role) => role.name === 'admin'
-                                    )
-                                "
-                                @change="toggleBlockUser(row)"
-                            />
-                            <div
-                                class="w-11 h-6 bg-blue-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 relative"
-                            ></div>
-                        </label>
-                    </template>
+                            <table-header-item>Actions</table-header-item>
+                        </table-header-row>
+                    </table-header>
 
-                    <!-- Actions column -->
-                    <template #actions="{ row }">
-                        <BaseButton
-                            variant="green"
-                            v-if="can('users.view')"
-                            @click="viewUser(row)"
-                            >Show</BaseButton
-                        >
-                        <BaseButton
-                            variant="dark"
-                            v-if="can('users.edit')"
-                            @click="editUser(row)"
-                            >Edit</BaseButton
-                        >
-                        <!-- <DangerButton
-                            v-if="can('users.delete')"
-                            @click="confirmDelete(row)"
-                        >
-                            Delete
-                        </DangerButton> -->
-                    </template>
-                </BaseTable>
+                    <table-body>
+                        <table-row v-for="user in users" :key="user.id">
+                            <table-item>{{ user.name }}</table-item>
+                            <table-item>{{ user.email }}</table-item>
+
+                            <table-item>
+                                <span
+                                    v-for="role in user.roles"
+                                    :key="role.id"
+                                    class="mr-1 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                                >
+                                    {{ role.name }}
+                                </span>
+                            </table-item>
+
+                            <table-item v-if="can('users.status')">
+                                <span
+                                    v-if="user.is_online"
+                                    class="text-green-600 font-bold"
+                                >
+                                    Online
+                                </span>
+                                <span v-else class="text-gray-400 font-bold">
+                                    Offline
+                                </span>
+                            </table-item>
+
+                            <table-item v-if="can('users.block_status')">
+                                <label
+                                    class="ms-2 inline-flex items-center cursor-pointer relative"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="sr-only peer"
+                                        :checked="!user.is_blocked"
+                                        :disabled="
+                                            user.roles.some(
+                                                (role) => role.name === 'admin'
+                                            )
+                                        "
+                                        @change="toggleBlockUser(user)"
+                                    />
+                                    <div
+                                        class="w-11 h-6 bg-blue-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 relative"
+                                    ></div>
+                                </label>
+                            </table-item>
+
+                            <table-item>
+                                <BaseButton
+                                    variant="green"
+                                    v-if="can('users.view')"
+                                    @click="viewUser(user)"
+                                >
+                                    Show
+                                </BaseButton>
+
+                                <BaseButton
+                                    variant="dark"
+                                    v-if="can('users.edit')"
+                                    @click="editUser(user)"
+                                >
+                                    Edit
+                                </BaseButton>
+
+                                <!-- <DangerButton
+                                    v-if="can('users.delete')"
+                                    @click="confirmDelete(user)"
+                                >
+                                    Delete
+                                </DangerButton> -->
+                            </table-item>
+                        </table-row>
+                    </table-body>
+                </base-table>
             </div>
         </div>
     </AdminLayout>
@@ -178,7 +203,15 @@ import DangerButton from "@/Components/DangerButton.vue";
 import DarkButton from "@/Components/DarkButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import BaseButton from "@/Components/BaseButton.vue";
+// import BaseTable from "@/Components/TableComponent/BaseTable.vue";
+
 import BaseTable from "@/Components/TableComponent/BaseTable.vue";
+import TableHeader from "@/Components/TableComponent/TableHeader.vue";
+import TableHeaderRow from "@/Components/TableComponent/TableHeaderRow.vue";
+import TableHeaderItem from "@/Components/TableComponent/TableHeaderItem.vue";
+import TableBody from "@/Components/TableComponent/TableBody.vue";
+import TableRow from "@/Components/TableComponent/TableRow.vue";
+import TableItem from "@/Components/TableComponent/TableItem.vue";
 
 const isTestModalOpen = ref(false);
 

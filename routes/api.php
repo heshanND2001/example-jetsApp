@@ -17,6 +17,7 @@ Route::get('/tasks', [TaskController::class, 'index']);
 Route::post('/task', [TaskController::class, 'task']);
 Route::delete('/task/{id}', [TaskController::class, 'destroy']);
 Route::put('/task/{id}', [TaskController::class, 'update']);
+Route::apiResource('tasks', TaskController::class);
 
 // Test route
 Route::get('/test-api', function () {

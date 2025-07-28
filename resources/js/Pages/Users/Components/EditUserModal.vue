@@ -29,93 +29,102 @@
                         <DialogPanel
                             class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
                         >
-                            <div
-                                class="bg-white p-6 rounded shadow-lg w-full max-w-lg"
-                            >
-                                <h2 class="text-xl font-semibold mb-4">
-                                    Edit User
-                                </h2>
+                            <div class="p-4">
+                                <div class="text-center">
+                                    <h1 class="title font-semibold text-2xl">
+                                        Edit User
+                                    </h1>
+                                </div>
 
-                                <form @submit.prevent="submit">
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium"
-                                            >Name</label
-                                        >
-                                        <input
-                                            v-model="form.name"
-                                            type="text"
-                                            class="mt-1 block w-full border px-3 py-2 rounded"
-                                        />
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium"
-                                            >Email</label
-                                        >
-                                        <input
-                                            v-model="form.email"
-                                            type="email"
-                                            class="mt-1 block w-full border px-3 py-2 rounded"
-                                        />
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium"
-                                            >Password</label
-                                        >
-                                        <input
-                                            v-model="form.password"
-                                            type="password"
-                                            class="mt-1 block w-full border px-3 py-2 rounded"
-                                        />
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium"
-                                            >Confirm Password</label
-                                        >
-                                        <input
-                                            v-model="form.password_confirmation"
-                                            type="password"
-                                            class="mt-1 block w-full border px-3 py-2 rounded"
-                                        />
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium"
-                                            >Role</label
-                                        >
-                                        <select
-                                            v-model="form.role"
-                                            class="mt-1 block w-full border px-3 py-2 rounded"
-                                        >
-                                            <option
-                                                v-for="role in props.roles"
-                                                :disabled="isAdmin"
-                                                :key="role.id"
-                                                :value="role.name"
+                                <div class="mb-4">
+                                    <form @submit.prevent="submit">
+                                        <div class="mb-4">
+                                            <label
+                                                class="block text-sm font-medium"
+                                                >Name</label
                                             >
-                                                {{ role.name }}
-                                            </option>
-                                        </select>
-                                    </div>
+                                            <input
+                                                v-model="form.name"
+                                                type="text"
+                                                class="mt-1 block w-full border px-3 py-2 rounded"
+                                            />
+                                        </div>
 
-                                    <div class="flex justify-end gap-2">
-                                        <BaseButton
-                                            variant="dark"
-                                            @click="close"
-                                            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                                        >
-                                            Cancel
-                                        </BaseButton>
-                                        <BaseButton
-                                            variant="primary"
-                                            :disabled="form.processing"
-                                        >
-                                            Save
-                                        </BaseButton>
-                                    </div>
-                                </form>
+                                        <div class="mb-4">
+                                            <label
+                                                class="block text-sm font-medium"
+                                                >Email</label
+                                            >
+                                            <input
+                                                v-model="form.email"
+                                                type="email"
+                                                class="mt-1 block w-full border px-3 py-2 rounded"
+                                            />
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label
+                                                class="block text-sm font-medium"
+                                                >Password</label
+                                            >
+                                            <input
+                                                v-model="form.password"
+                                                type="password"
+                                                class="mt-1 block w-full border px-3 py-2 rounded"
+                                            />
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label
+                                                class="block text-sm font-medium"
+                                                >Confirm Password</label
+                                            >
+                                            <input
+                                                v-model="
+                                                    form.password_confirmation
+                                                "
+                                                type="password"
+                                                class="mt-1 block w-full border px-3 py-2 rounded"
+                                            />
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label
+                                                class="block text-sm font-medium"
+                                                >Role</label
+                                            >
+                                            <select
+                                                v-model="form.role"
+                                                class="mt-1 block w-full border px-3 py-2 rounded"
+                                            >
+                                                <option
+                                                    v-for="role in props.roles"
+                                                    :disabled="isAdmin"
+                                                    :key="role.id"
+                                                    :value="role.name"
+                                                >
+                                                    {{ role.name }}
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="flex justify-end gap-2">
+                                            <BaseButton
+                                                variant="dark"
+                                                @click="close"
+                                                class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                                            >
+                                                Cancel
+                                            </BaseButton>
+                                            <BaseButton
+                                                variant="primary"
+                                                :disabled="form.processing"
+                                            >
+                                                Save
+                                            </BaseButton>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
 
                             <!-- <div

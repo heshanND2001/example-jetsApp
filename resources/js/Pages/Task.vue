@@ -82,40 +82,42 @@ form {
 
             <!-- </div> -->
 
-            <BaseTable
-                :columns="[
-                    { key: 'id', label: 'ID' },
-                    { key: 'title', label: 'Task Title' },
-                ]"
-                :data="tasks"
-            >
-                <!-- Custom status cell -->
-                <!-- <template #is_completed="{ row }">
-                    <span
-                        :class="
-                            row.is_completed
-                                ? 'text-green-600 font-bold'
-                                : 'text-gray-500'
-                        "
-                    >
-                        {{ row.is_completed ? "Completed" : "Pending" }}
-                    </span>
-                </template> -->
+            <base-table>
+                <table-header>
+                    <table-header-row>
+                        <table-header-item>ID</table-header-item>
+                        <table-header-item>Task Title</table-header-item>
+                        <table-header-item>Actions</table-header-item>
+                    </table-header-row>
+                </table-header>
 
-                <!-- Action buttons -->
-                <template #actions="{ row }">
-                    <BaseButton variant="green" @click="openEditModal(row)">
-                        Update
-                    </BaseButton>
-                    <BaseButton
-                        variant="danger"
-                        @click="deleteTask(row.id)"
-                        :disabled="deleting === row.id"
-                    >
-                        {{ deleting === row.id ? "Deleting..." : "Delete" }}
-                    </BaseButton>
-                </template>
-            </BaseTable>
+                <table-body>
+                    <table-row v-for="task in tasks" :key="task.id">
+                        <table-item>{{ task.id }}</table-item>
+                        <table-item>{{ task.title }}</table-item>
+
+                        <table-item>
+                            <BaseButton
+                                variant="green"
+                                @click="openEditModal(task)"
+                            >
+                                Update
+                            </BaseButton>
+                            <BaseButton
+                                variant="danger"
+                                @click="deleteTask(task.id)"
+                                :disabled="deleting === task.id"
+                            >
+                                {{
+                                    deleting === task.id
+                                        ? "Deleting..."
+                                        : "Delete"
+                                }}
+                            </BaseButton>
+                        </table-item>
+                    </table-row>
+                </table-body>
+            </base-table>
 
             <!-- Update Modal -->
             <TaskModal
@@ -140,8 +142,16 @@ import axios from "axios";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import AdminLayout from "@/Layouts/AdminLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import BaseTable from "@/Components/TableComponent/BaseTable.vue";
+// import BaseTable from "@/Components/TableComponent/BaseTable.vue";
 import BaseButton from "@/Components/BaseButton.vue";
+
+import BaseTable from "@/Components/TableComponent/BaseTable.vue";
+import TableHeader from "@/Components/TableComponent/TableHeader.vue";
+import TableHeaderRow from "@/Components/TableComponent/TableHeaderRow.vue";
+import TableHeaderItem from "@/Components/TableComponent/TableHeaderItem.vue";
+import TableBody from "@/Components/TableComponent/TableBody.vue";
+import TableRow from "@/Components/TableComponent/TableRow.vue";
+import TableItem from "@/Components/TableComponent/TableItem.vue";
 
 const tasks = ref([]);
 const search = ref("");
