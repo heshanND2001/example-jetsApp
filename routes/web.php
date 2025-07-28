@@ -21,6 +21,11 @@ Route::get('/register', function () {
     return Inertia::render('Auth/Register');
 })->name('register');
 
+Route::get('/admin', function () {
+    return Inertia::render('Admin');
+});
+
+
 // Dashboard route with auth
 Route::middleware([
     'auth:sanctum',
@@ -55,11 +60,11 @@ Route::get('/users', function () {
     return Inertia::render('Users/Users');
 })->name('users.index');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/roles', function () {
-        return Inertia::render('Roles/Index');
-    })->name('roles.index');
-});
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/roles', function () {
+//         return Inertia::render('Roles/Index');
+//     })->name('roles.index');
+// });
 
 
 
@@ -96,6 +101,8 @@ Route::post('/users/{user}/unblock', function (User $user) {
 
 
 //////
+Route::resource('users', UserController::class);
+
 
 Route::resource('users', UserController::class)
     ->only(['create', 'store'])
@@ -130,7 +137,6 @@ Route::resource('roles', RoleController::class)
 //     ->middleware(["permission:roles.create | roles.edit | roles.destroy | roles.index"]);
 
 
-Route::resource('users', UserController::class);
 
 Route::resource('roles', RoleController::class);
 

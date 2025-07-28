@@ -63,20 +63,16 @@
                     class="taskInput"
                 />
                 <div class="p-2">
-                    <button
-                        type="submit"
-                        class="bg-green-400 rounded p-1 text-white"
-                        :disabled="loading"
-                    >
+                    <BaseButton variant="green" :disabled="loading">
                         {{ loading ? "Updating..." : "Update" }}
-                    </button>
-                    <button
+                    </BaseButton>
+                    <BaseButton
+                        variant="danger"
                         @click="$emit('close')"
-                        class="bg-red-500 rounded p-1 ms-3 text-white"
                         :disabled="loading"
                     >
                         Cancel
-                    </button>
+                    </BaseButton>
                 </div>
             </form>
         </div>
@@ -84,6 +80,7 @@
 </template>
 
 <script setup>
+import BaseButton from "@/Components/BaseButton.vue";
 import { defineProps, watch, reactive, ref } from "vue";
 
 const props = defineProps({

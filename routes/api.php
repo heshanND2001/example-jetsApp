@@ -53,3 +53,19 @@ Route::get('/users', function () {
         'data' => User::with('roles')->get()
     ]);
 });
+
+Route::get('/users', function (Illuminate\Http\Request $request) {
+    $query = User::with('roles');
+
+    if ($request->filled('search')) {
+        $search = $request->input('search');
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
+        });
+    }
+
+    return response()->json([
+        'data' => $query->latest()->get()
+    ]);
+});

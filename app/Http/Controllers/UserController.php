@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
@@ -16,7 +17,8 @@ class UserController extends Controller
     public function index()
     {
         return Inertia::render('Users/Users', [
-            'users' => User::with('roles')->get()
+            'users' => User::with('roles')->get(),
+            'roles' => Role::all()
         ]);
     }
 
@@ -79,7 +81,7 @@ class UserController extends Controller
         return Inertia::render('Users/Edit', [
             'user' => $user,
             'userRoles' => $user->roles->pluck('name')->all(),
-            'roles' => Role::pluck('name')->all(),
+            'roles' => Role::pluck('name')->toArray(),
 
         ]);
     }
@@ -91,16 +93,22 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($id),
+            ],
+            'password' => 'nullable|string|min:8',
         ]);
 
-        $user = User::find($id);
+        $user = User::findOrFail($id);
 
         $user->name = $request->name;
         $user->email = $request->email;
 
-        if ($request->password) {
+        if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
 
@@ -109,6 +117,8 @@ class UserController extends Controller
         $user->syncRoles($request->role);
 
         return to_route("users.index")->with('success', 'User updated successfully');
+
+        // dd($request->role);
     }
 
     /**

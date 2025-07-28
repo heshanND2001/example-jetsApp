@@ -189,7 +189,7 @@ import AuthenticationCardLogo from "@/Components/AuthenticationCardLogo.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
+import PrimaryButton from "@/Components/DarkButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import Index from "../Roles/Index.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
@@ -200,7 +200,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 
 const props = defineProps({
     user: Object,
-    roles: Array,
+    roles: Object,
     userRoles: Array,
 });
 

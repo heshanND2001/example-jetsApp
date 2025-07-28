@@ -32,7 +32,7 @@ form {
 
     <!-- <Head title="Task" /> -->
 
-    <AppLayout title="Task">
+    <AdminLayout title="Task">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Task
@@ -62,12 +62,9 @@ form {
                             >{{ form.errors.title[0] }}</small
                         >
 
-                        <button
-                            class="w-1/4 rounded-sm bg-blue-500 text-white px-4 py-1 ms-2"
-                            :disabled="loading"
-                        >
+                        <PrimaryButton class="ms-2" :disabled="loading">
                             {{ loading ? "Adding..." : "Add Task" }}
-                        </button>
+                        </PrimaryButton>
                     </div>
                 </form>
             </div>
@@ -85,33 +82,40 @@ form {
 
             <!-- </div> -->
 
-            <div v-for="task in tasks" :key="task.id">
-                <div :class="['task', task.is_completed ? 'completed' : '']">
-                    <form>
-                        <!-- <input type="checkbox" /> -->
-                        {{ task.title }}
-                    </form>
+            <BaseTable
+                :columns="[
+                    { key: 'id', label: 'ID' },
+                    { key: 'title', label: 'Task Title' },
+                ]"
+                :data="tasks"
+            >
+                <!-- Custom status cell -->
+                <!-- <template #is_completed="{ row }">
+                    <span
+                        :class="
+                            row.is_completed
+                                ? 'text-green-600 font-bold'
+                                : 'text-gray-500'
+                        "
+                    >
+                        {{ row.is_completed ? "Completed" : "Pending" }}
+                    </span>
+                </template> -->
 
-                    <div class="actions">
-                        <button
-                            class="bg-green-500 rounded p-1 text-white"
-                            @click="openEditModal(task)"
-                        >
-                            Update
-                        </button>
-                        <!-- <button class="updatebtn"><Link :href="route('task.edit', task.id)">Update</Link></button> -->
-                        <button
-                            @click="deleteTask(task.id)"
-                            class="bg-red-500 rounded p-1 text-white"
-                            :disabled="deleting === task.id"
-                        >
-                            {{
-                                deleting === task.id ? "Deleting..." : "Delete"
-                            }}
-                        </button>
-                    </div>
-                </div>
-            </div>
+                <!-- Action buttons -->
+                <template #actions="{ row }">
+                    <BaseButton variant="green" @click="openEditModal(row)">
+                        Update
+                    </BaseButton>
+                    <BaseButton
+                        variant="danger"
+                        @click="deleteTask(row.id)"
+                        :disabled="deleting === row.id"
+                    >
+                        {{ deleting === row.id ? "Deleting..." : "Delete" }}
+                    </BaseButton>
+                </template>
+            </BaseTable>
 
             <!-- Update Modal -->
             <TaskModal
@@ -121,7 +125,7 @@ form {
                 @update="updateTask"
             />
         </div>
-    </AppLayout>
+    </AdminLayout>
 </template>
 
 <script setup>
@@ -134,6 +138,10 @@ import TaskModal from "./components/TaskModal.vue";
 import axios from "axios";
 
 import AppLayout from "@/Layouts/AppLayout.vue";
+import AdminLayout from "@/Layouts/AdminLayout.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import BaseTable from "@/Components/TableComponent/BaseTable.vue";
+import BaseButton from "@/Components/BaseButton.vue";
 
 const tasks = ref([]);
 const search = ref("");

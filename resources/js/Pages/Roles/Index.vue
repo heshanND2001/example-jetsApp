@@ -32,7 +32,7 @@ form {
 
     <!-- <Head title="Task" /> -->
 
-    <AppLayout title="Roles">
+    <AdminLayout title="Roles">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Roles
@@ -40,86 +40,154 @@ form {
         </template>
 
         <div
-            class="p-12 mx-auto sm:px-6 lg:px-8 border border-b border-gray-200 mt-4 rounded-lg shadow-lg ms-4 ml-4"
+            class="p-12 max-w-7xl mx-auto sm:px-6 lg:px-8 border border-b border-gray-200 mt-4 rounded-lg shadow-lg"
         >
-            <Link
+            <BaseButton
+                variant="primary"
                 v-if="can('roles.create')"
-                :href="route('roles.create')"
-                class="cursor-pointer px-3 py-1 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                @click="openCreateModal"
             >
                 Create Role
-            </Link>
+            </BaseButton>
+
+            <!-- <BaseButton variant="primary" @click="handleClick">
+                Delete
+            </BaseButton> -->
 
             <hr class="my-4" />
 
-            <table class="table-fixed w-auto">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th class="w-1/4">Permissions</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
+            <BaseTable
+                :columns="[
+                    { key: 'id', label: 'ID' },
+                    { key: 'name', label: 'Name' },
+                    { key: 'permissions', label: 'Permissions' },
+                ]"
+                :data="roles"
+            >
+                <!-- Custom cell for permissions -->
+                <template #permissions="{ row }">
+                    <div class="flex flex-wrap gap-1">
+                        <span
+                            v-for="p in row.permissions"
+                            :key="p.id"
+                            class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded"
+                        >
+                            {{ p.name }}
+                        </span>
+                    </div>
+                </template>
 
-                <tbody>
-                    <tr v-for="role in roles" :key="role.id">
-                        <td
-                            class="px-6 py-2 text-gray-900 dark:text-gray-white text-center"
-                        >
-                            {{ role.id }}
-                        </td>
-                        <td
-                            class="px-6 py-2 text-gray-800 dark:text-gray-600 text-center"
-                        >
-                            {{ role.name }}
-                        </td>
-                        <td class="px-6 py-2 text-gray-600 dark:text-gray-300">
-                            <span
-                                v-for="permission in role.permissions"
-                                key="1"
-                                class="mr-1 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5"
-                                >{{ permission.name }}</span
-                            >
-                        </td>
-                        <td>
-                            <div class="actions justify-center">
-                                <Link
-                                    v-if="can('roles.view')"
-                                    :href="route('roles.show', role.id)"
-                                    class="cursor-pointer px-3 py-1 text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                                >
-                                    Show
-                                </Link>
-                                <Link
-                                    v-if="can('roles.edit')"
-                                    :href="route('roles.edit', role.id)"
-                                    class="cursor-pointer px-3 py-1 text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                                    >Edit</Link
-                                >
-                                <button
-                                    v-if="can('roles.delete')"
-                                    @click="confirmDelete(role.id)"
-                                    class="cursor-pointer px-3 py-1 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                <!-- Action buttons -->
+                <template #actions="{ row }">
+                    <BaseButton
+                        variant="green"
+                        v-if="can('roles.view')"
+                        @click="openShowModal(row)"
+                        >Show</BaseButton
+                    >
+                    <BaseButton
+                        variant="dark"
+                        v-if="can('roles.edit')"
+                        @click="openEditModal(row)"
+                        >Edit</BaseButton
+                    >
+                    <!-- <BaseButton
+                        variant="danger"
+                        v-if="can('roles.delete')"
+                        @click="confirmDelete(row)"
+                    >
+                        Delete
+                    </BaseButton> -->
+                </template>
+            </BaseTable>
         </div>
-    </AppLayout>
+    </AdminLayout>
+
+    <EditRoleModal
+        v-if="selectedRole"
+        :show="showEditModal"
+        :role="selectedRole"
+        :permissions="allPermissions"
+        :rolePermissions="selectedRolePermissions"
+        @close="closeEditModal"
+    />
+
+    <ShowRolePermissionModal
+        v-if="selectedRole"
+        :show="showRoleModal"
+        :role="selectedRole"
+        @close="closeShowModal"
+    />
+
+    <CreateRoleModal
+        :show="showCreateModal"
+        :permissions="allPermissions"
+        @close="closeCreateModal"
+    />
 </template>
 
 <script setup>
-import { computed } from "vue";
-import AppLayout from "@/Layouts/AppLayout.vue";
+import { ref, computed } from "vue";
+import AdminLayout from "@/Layouts/AdminLayout.vue";
 import { Link, usePage, router } from "@inertiajs/vue3";
 import { can } from "@/lib/can";
+import EditRoleModal from "./Components/EditRoleModal.vue";
+import ShowRolePermissionModal from "./Components/ShowRolePermissionModal.vue";
+import CreateRoleModal from "./Components/CreateRoleModal.vue";
+import GreenButton from "@/Components/GreenButton.vue";
+import DangerButton from "@/Components/DangerButton.vue";
+import DarkButton from "@/Components/DarkButton.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import BaseButton from "@/Components/BaseButton.vue";
+import TableComponent from "@/Components/TableComponent/TableComponent.vue";
+import BaseTable from "@/Components/TableComponent/BaseTable.vue";
+
+// function handleClick() {
+//     alert("Button clicked!");
+// }
 
 const roles = computed(() => usePage().props.roles);
+const allPermissions = computed(() => usePage().props.permissions);
+
+const showEditModal = ref(false);
+const selectedRole = ref(null);
+const selectedRolePermissions = ref([]);
+
+const openEditModal = (role) => {
+    selectedRole.value = role;
+    selectedRolePermissions.value = role.permissions.map((p) => p.name);
+    showEditModal.value = true;
+};
+
+const closeEditModal = () => {
+    showEditModal.value = false;
+    selectedRole.value = null;
+    selectedRolePermissions.value = [];
+};
+
+const showRoleModal = ref(false);
+
+const openShowModal = (role) => {
+    selectedRole.value = role;
+    selectedRolePermissions.value = role.permissions.map((p) => p.name);
+    showRoleModal.value = true;
+};
+
+const closeShowModal = () => {
+    showRoleModal.value = false;
+    selectedRole.value = null;
+    selectedRolePermissions.value = [];
+};
+
+const showCreateModal = ref(false);
+
+const openCreateModal = () => {
+    showCreateModal.value = true;
+};
+
+const closeCreateModal = () => {
+    showCreateModal.value = false;
+};
 
 const confirmDelete = (id) => {
     if (confirm("Are you sure you want to delete this role?")) {

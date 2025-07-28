@@ -14,12 +14,15 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::all(); // <-- Correct usage
-        // Or, if you want to pass to Inertia:
-        return inertia('Roles/Index', [
-            'roles' => Role::with('permissions')->get(), // Fetch roles with permissions
+        $roles = Role::with('permissions')->get();
+        $permissions = Permission::pluck('name'); // pass names only
+
+        return Inertia::render('Roles/Index', [
+            'roles' => $roles,
+            'permissions' => $permissions,
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
