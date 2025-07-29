@@ -1,14 +1,10 @@
 <template>
     <AdminLayout title="Roles">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Roles
-            </h2>
+            <HeaderTopic> Roles </HeaderTopic>
         </template>
 
-        <div
-            class="p-12 max-w-7xl mx-auto sm:px-6 lg:px-8 border border-b border-gray-200 mt-4 rounded-lg shadow-lg"
-        >
+        <PageBody>
             <BaseButton
                 variant="primary"
                 v-if="can('roles.create')"
@@ -71,7 +67,7 @@
                     </table-row>
                 </table-body>
             </base-table>
-        </div>
+        </PageBody>
     </AdminLayout>
 
     <EditRoleModal
@@ -114,6 +110,8 @@ import TableHeaderItem from "@/Components/TableComponent/TableHeaderItem.vue";
 import TableBody from "@/Components/TableComponent/TableBody.vue";
 import TableRow from "@/Components/TableComponent/TableRow.vue";
 import TableItem from "@/Components/TableComponent/TableItem.vue";
+import HeaderTopic from "@/Components/HeaderTopic.vue";
+import PageBody from "@/Components/PageBody.vue";
 
 const roles = computed(() => usePage().props.roles);
 const allPermissions = computed(() => usePage().props.permissions);
