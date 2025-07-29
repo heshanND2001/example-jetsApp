@@ -142,7 +142,7 @@ form {
                                 <BaseButton
                                     variant="green"
                                     v-if="can('users.view')"
-                                    @click="viewUser(user)"
+                                    @click="openShowModal(user)"
                                 >
                                     Show
                                 </BaseButton>
@@ -184,6 +184,13 @@ form {
         @close="isTestModalOpen = false"
         @created="handleUserUpdate"
     />
+
+    <ShowUserModal
+        v-if="selectedUser"
+        :show="showUserModal"
+        :user="selectedUser"
+        @close="closeShowModal"
+    />
 </template>
 
 <script setup>
@@ -212,6 +219,7 @@ import TableHeaderItem from "@/Components/TableComponent/TableHeaderItem.vue";
 import TableBody from "@/Components/TableComponent/TableBody.vue";
 import TableRow from "@/Components/TableComponent/TableRow.vue";
 import TableItem from "@/Components/TableComponent/TableItem.vue";
+import ShowUserModal from "./Components/ShowUserModal.vue";
 
 const isTestModalOpen = ref(false);
 
@@ -337,5 +345,15 @@ const isCreateModalOpen = ref(false);
 
 const CreateUser = () => {
     isCreateModalOpen.value = true;
+};
+
+const showUserModal = ref(false);
+const openShowModal = (user) => {
+    selectedUser.value = user;
+    showUserModal.value = true;
+};
+const closeShowModal = () => {
+    showUserModal.value = false;
+    selectedUser.value = null;
 };
 </script>

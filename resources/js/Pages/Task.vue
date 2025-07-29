@@ -119,7 +119,6 @@ form {
                 </table-body>
             </base-table>
 
-            <!-- Update Modal -->
             <TaskModal
                 :show="showModal"
                 :task="selectedTask"

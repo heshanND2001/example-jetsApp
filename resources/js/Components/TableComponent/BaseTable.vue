@@ -8,9 +8,7 @@
     </div>
 </template>
 
-<script setup>
-// This acts as the root wrapper
-</script>
+<script setup></script>
 <style>
 ::-webkit-scrollbar {
     width: 6px;
