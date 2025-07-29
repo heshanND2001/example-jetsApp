@@ -34,14 +34,10 @@ form {
 
     <AdminLayout title="Users">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Users
-            </h2>
+            <HeaderTopic> Users </HeaderTopic>
         </template>
 
-        <div
-            class="p-12 max-w-7xl mx-auto sm:px-6 lg:px-8 border border-b border-gray-200 mt-4 rounded-lg shadow-lg"
-        >
+        <PageBody>
             <div class="flex justify-between mb-4 mt-4">
                 <input
                     type="search"
@@ -166,7 +162,7 @@ form {
                     </table-body>
                 </base-table>
             </div>
-        </div>
+        </PageBody>
     </AdminLayout>
 
     <EditUserModal
@@ -220,6 +216,8 @@ import TableBody from "@/Components/TableComponent/TableBody.vue";
 import TableRow from "@/Components/TableComponent/TableRow.vue";
 import TableItem from "@/Components/TableComponent/TableItem.vue";
 import ShowUserModal from "./Components/ShowUserModal.vue";
+import HeaderTopic from "@/Components/HeaderTopic.vue";
+import PageBody from "@/Components/PageBody.vue";
 
 const isTestModalOpen = ref(false);
 

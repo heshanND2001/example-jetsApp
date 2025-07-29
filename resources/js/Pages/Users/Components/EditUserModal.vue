@@ -1,133 +1,97 @@
 <template>
     <TransitionRoot as="template" :show="props.show">
         <Dialog class="relative z-10" @close="emit('close')">
-            <TransitionChild
-                as="template"
-                enter="ease-out duration-300"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="ease-in duration-200"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
-            >
-                <div class="fixed inset-0 bg-gray-500/75 transition-opacity" />
-            </TransitionChild>
+            <ModalComponent>
+                <div class="p-4">
+                    <div class="text-center">
+                        <h1 class="title font-semibold text-2xl">Edit User</h1>
+                    </div>
 
-            <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-                <div
-                    class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
-                >
-                    <TransitionChild
-                        as="template"
-                        enter="ease-out duration-300"
-                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enter-to="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leave-from="opacity-100 translate-y-0 sm:scale-100"
-                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                        <DialogPanel
-                            class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
-                        >
-                            <div class="p-4">
-                                <div class="text-center">
-                                    <h1 class="title font-semibold text-2xl">
-                                        Edit User
-                                    </h1>
-                                </div>
-
-                                <div class="mb-4">
-                                    <form @submit.prevent="submit">
-                                        <div class="mb-4">
-                                            <label
-                                                class="block text-sm font-medium"
-                                                >Name</label
-                                            >
-                                            <input
-                                                v-model="form.name"
-                                                type="text"
-                                                class="mt-1 block w-full border px-3 py-2 rounded"
-                                            />
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <label
-                                                class="block text-sm font-medium"
-                                                >Email</label
-                                            >
-                                            <input
-                                                v-model="form.email"
-                                                type="email"
-                                                class="mt-1 block w-full border px-3 py-2 rounded"
-                                            />
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <label
-                                                class="block text-sm font-medium"
-                                                >Password</label
-                                            >
-                                            <input
-                                                v-model="form.password"
-                                                type="password"
-                                                class="mt-1 block w-full border px-3 py-2 rounded"
-                                            />
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <label
-                                                class="block text-sm font-medium"
-                                                >Confirm Password</label
-                                            >
-                                            <input
-                                                v-model="
-                                                    form.password_confirmation
-                                                "
-                                                type="password"
-                                                class="mt-1 block w-full border px-3 py-2 rounded"
-                                            />
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <label
-                                                class="block text-sm font-medium"
-                                                >Role</label
-                                            >
-                                            <select
-                                                v-model="form.role"
-                                                class="mt-1 block w-full border px-3 py-2 rounded"
-                                            >
-                                                <option
-                                                    v-for="role in props.roles"
-                                                    :disabled="isAdmin"
-                                                    :key="role.id"
-                                                    :value="role.name"
-                                                >
-                                                    {{ role.name }}
-                                                </option>
-                                            </select>
-                                        </div>
-
-                                        <div class="flex justify-end gap-2">
-                                            <BaseButton
-                                                variant="dark"
-                                                @click="close"
-                                                class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                                            >
-                                                Cancel
-                                            </BaseButton>
-                                            <BaseButton
-                                                variant="primary"
-                                                :disabled="form.processing"
-                                            >
-                                                Save
-                                            </BaseButton>
-                                        </div>
-                                    </form>
-                                </div>
+                    <div class="mb-4">
+                        <form @submit.prevent="submit">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium"
+                                    >Name</label
+                                >
+                                <input
+                                    v-model="form.name"
+                                    type="text"
+                                    class="mt-1 block w-full border px-3 py-2 rounded"
+                                />
                             </div>
 
-                            <!-- <div
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium"
+                                    >Email</label
+                                >
+                                <input
+                                    v-model="form.email"
+                                    type="email"
+                                    class="mt-1 block w-full border px-3 py-2 rounded"
+                                />
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium"
+                                    >Password</label
+                                >
+                                <input
+                                    v-model="form.password"
+                                    type="password"
+                                    class="mt-1 block w-full border px-3 py-2 rounded"
+                                />
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium"
+                                    >Confirm Password</label
+                                >
+                                <input
+                                    v-model="form.password_confirmation"
+                                    type="password"
+                                    class="mt-1 block w-full border px-3 py-2 rounded"
+                                />
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium"
+                                    >Role</label
+                                >
+                                <select
+                                    v-model="form.role"
+                                    class="mt-1 block w-full border px-3 py-2 rounded"
+                                >
+                                    <option
+                                        v-for="role in props.roles"
+                                        :disabled="isAdmin"
+                                        :key="role.id"
+                                        :value="role.name"
+                                    >
+                                        {{ role.name }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="flex justify-end gap-2">
+                                <BaseButton
+                                    variant="dark"
+                                    @click="close"
+                                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                                >
+                                    Cancel
+                                </BaseButton>
+                                <BaseButton
+                                    variant="primary"
+                                    :disabled="form.processing"
+                                >
+                                    Save
+                                </BaseButton>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- <div
                                 class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
                             >
                                 <button
@@ -145,10 +109,7 @@
                                     Cancel
                                 </button>
                             </div> -->
-                        </DialogPanel>
-                    </TransitionChild>
-                </div>
-            </div>
+            </ModalComponent>
         </Dialog>
     </TransitionRoot>
 </template>
@@ -168,6 +129,7 @@ import { useForm } from "@inertiajs/vue3";
 import { watch, reactive, toRefs } from "vue";
 
 import { computed } from "vue";
+import ModalComponent from "@/Components/ModalComponent.vue";
 
 const props = defineProps({
     user: Object,

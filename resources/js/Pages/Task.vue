@@ -34,14 +34,10 @@ form {
 
     <AdminLayout title="Task">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Task
-            </h2>
+            <HeaderTopic> Task </HeaderTopic>
         </template>
 
-        <div
-            class="p-12 max-w-7xl mx-auto sm:px-6 lg:px-8 border border-b border-gray-200 mt-4 rounded-lg shadow-lg"
-        >
+        <PageBody>
             <div class="text-center mb-4 mt-0">
                 <h1 class="title font-bold text-2xl mt-0">New Task</h1>
             </div>
@@ -125,7 +121,7 @@ form {
                 @close="showModal = false"
                 @update="updateTask"
             />
-        </div>
+        </PageBody>
     </AdminLayout>
 </template>
 
@@ -151,6 +147,8 @@ import TableHeaderItem from "@/Components/TableComponent/TableHeaderItem.vue";
 import TableBody from "@/Components/TableComponent/TableBody.vue";
 import TableRow from "@/Components/TableComponent/TableRow.vue";
 import TableItem from "@/Components/TableComponent/TableItem.vue";
+import HeaderTopic from "@/Components/HeaderTopic.vue";
+import PageBody from "@/Components/PageBody.vue";
 
 const tasks = ref([]);
 const search = ref("");
