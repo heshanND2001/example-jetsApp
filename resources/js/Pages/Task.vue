@@ -247,7 +247,9 @@ const openEditModal = (task) => {
 const updateTask = async (updatedTask) => {
     try {
         const response = await axios.put(`/api/tasks/${updatedTask.id}`, {
+            id: updatedTask.id, // ✅ needed
             title: updatedTask.title,
+            is_completed: updatedTask.is_completed,
         });
 
         // Update task in the list
@@ -255,7 +257,8 @@ const updateTask = async (updatedTask) => {
             (task) => task.id === updatedTask.id
         );
         if (index !== -1) {
-            tasks.value[index] = response.data.data;
+            tasks.value[index] =
+                response?.data?.original?.data ?? response?.data?.data;
         }
 
         showModal.value = false;

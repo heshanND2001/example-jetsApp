@@ -70,3 +70,18 @@ Route::get('/users', function (Illuminate\Http\Request $request) {
         'data' => $query->latest()->get()
     ]);
 });
+
+// Route::middleware(['auth:sanctum'])->group(function () {
+//     Route::post('/users/{user}/block', function (User $user) {
+//         $user->is_blocked = true;
+//         $user->save();
+//         DB::table('sessions')->where('user_id', $user->id)->delete();
+//         return response()->json(['message' => 'User blocked']);
+//     });
+
+//     Route::post('/users/{user}/unblock', function (User $user) {
+//         $user->is_blocked = false;
+//         $user->save();
+//         return response()->json(['message' => 'User unblocked']);
+//     });
+// });

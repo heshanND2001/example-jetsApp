@@ -81,7 +81,7 @@ Route::get('/logged-in-users', function () {
 })->middleware(['auth', 'verified']);
 
 
-// Move this to web.php
+
 Route::post('/users/{user}/block', function (User $user) {
     $user->is_blocked = true;
     $user->save();
@@ -100,7 +100,6 @@ Route::post('/users/{user}/unblock', function (User $user) {
 
 
 
-//////
 Route::resource('users', UserController::class);
 
 
