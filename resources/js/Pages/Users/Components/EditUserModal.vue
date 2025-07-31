@@ -112,7 +112,6 @@
                                             <BaseButton
                                                 variant="dark"
                                                 @click="close"
-                                                class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
                                             >
                                                 Cancel
                                             </BaseButton>

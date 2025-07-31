@@ -55,7 +55,7 @@ Route::get('/users', function () {
     ]);
 });
 
-Route::get('/users', function (Illuminate\Http\Request $request) {
+Route::get('/users', function (Request $request) {
     $query = User::with('roles');
 
     if ($request->filled('search')) {

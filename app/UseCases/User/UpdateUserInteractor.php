@@ -18,7 +18,6 @@ class UpdateUserInteractor
         }
 
         $user->save();
-
         $user->syncRoles($userRequest->role);
 
         return $user;

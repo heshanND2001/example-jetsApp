@@ -127,51 +127,52 @@ class UserController extends Controller
      * Update the specified resource in storage.
      */
 
-    // public function update(UserRequest $userRequest, string $id, UpdateUserInteractor $interactor)
-    // {
-    //     $user = User::findOrFail($id);
-
-    //     // Inject and execute interactor
-    //     $interactor->execute($user, $userRequest);
-
-    //     return to_route("users.index")->with('success', 'User updated successfully');
-    // }
-
-
-
-
-
-    public function update(Request $request, string $id)
+    public function update(string $id, UpdateUserInteractor $interactor)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users')->ignore($id),
-            ],
-            'password' => 'nullable|string|min:8',
-        ]);
+
+        $userRequest = UserRequest::validateAndCreate(request());
 
         $user = User::findOrFail($id);
-
-        $user->name = $request->name;
-        $user->email = $request->email;
-
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-
-        $user->save();
-
-        $user->syncRoles($request->role);
+        $interactor->execute($user, $userRequest);
 
         return to_route("users.index")->with('success', 'User updated successfully');
-
-        // dd($request->role);
     }
+
+
+
+
+
+    // public function update(Request $request, string $id)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'email' => [
+    //             'required',
+    //             'string',
+    //             'email',
+    //             'max:255',
+    //             Rule::unique('users')->ignore($id),
+    //         ],
+    //         'password' => 'nullable|string|min:8',
+    //     ]);
+
+    //     $user = User::findOrFail($id);
+
+    //     $user->name = $request->name;
+    //     $user->email = $request->email;
+
+    //     if ($request->filled('password')) {
+    //         $user->password = Hash::make($request->password);
+    //     }
+
+    //     $user->save();
+
+    //     $user->syncRoles($request->role);
+
+    //     return to_route("users.index")->with('success', 'User updated successfully');
+
+    //     // dd($request->role);
+    // }
 
     /**
      * Remove the specified resource from storage.
