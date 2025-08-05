@@ -3,6 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\UseCases\User\EditUserInteractor;
+use App\UseCases\User\ListUserInteractor;
+use App\UseCases\User\Requests\UserRequest;
+use App\UseCases\User\ShowUserInteractor;
+use App\UseCases\User\StoreUserInteractor;
+use App\UseCases\User\UpdateUserInteractor;
+use App\UseCases\User\UpdateUserInteractor as UsersUpdateUserInteractor;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -14,13 +22,19 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+    public function index(ListUserInteractor $listUserInteractor)
     {
-        return Inertia::render('Users/Users', [
-            'users' => User::with('roles')->get(),
-            'roles' => Role::all()
-        ]);
+        return $listUserInteractor->execute();
     }
+
+    // public function index()
+    // {
+    //     return Inertia::render('Users/Users', [
+    //         'users' => User::with('roles')->get(),
+    //         'roles' => Role::all()
+    //     ]);
+    // }
 
 
 
@@ -37,25 +51,34 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+
+    public function store(StoreUserInteractor $storeUserInteractor)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|exists:roles,name', // Optional but good
-        ]);
+        $data = UserRequest::validateAndCreate(request());
+        $user = $storeUserInteractor->execute($data);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $user->syncRoles($request->role);
-
-        return to_route("users.index");
+        return to_route('users.index')->with('success', 'User created successfully');
     }
+
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'email' => 'required|string|email|max:255|unique:users',
+    //         'password' => 'required|string|min:8|confirmed',
+    //         'role' => 'required|string|exists:roles,name', // Optional but good
+    //     ]);
+
+    //     $user = User::create([
+    //         'name' => $request->name,
+    //         'email' => $request->email,
+    //         'password' => Hash::make($request->password),
+    //     ]);
+
+    //     $user->syncRoles($request->role);
+
+    //     return to_route("users.index");
+    // }
 
 
 
@@ -63,63 +86,93 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+
+    public function show(User $user, ShowUserInteractor $showUserInteractor)
     {
-        $user = User::with('roles')->findOrFail($id);
-        return Inertia::render('Users/show', [
-            'user' => $user,
-            'userRoles' => $user->roles->pluck('name')->all(),
-        ]);
+        return $showUserInteractor->execute($user);
     }
+
+    // public function show(string $id)
+    // {
+    //     $user = User::with('roles')->findOrFail($id);
+    //     return Inertia::render('Users/show', [
+    //         'user' => $user,
+    //         'userRoles' => $user->roles->pluck('name')->all(),
+    //     ]);
+    // }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        $user = User::find($id);
-        return Inertia::render('Users/Edit', [
-            'user' => $user,
-            'userRoles' => $user->roles->pluck('name')->all(),
-            'roles' => Role::pluck('name')->toArray(),
 
-        ]);
+
+    public function edit(int $id, EditUserInteractor $interactor)
+    {
+        return $interactor->execute($id);
     }
+
+
+    // public function edit(string $id)
+    // {
+    //     $user = User::find($id);
+    //     return Inertia::render('Users/Edit', [
+    //         'user' => $user,
+    //         'userRoles' => $user->roles->pluck('name')->all(),
+    //         'roles' => Role::pluck('name')->toArray(),
+
+    //     ]);
+    // }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+
+    public function update(string $id, UpdateUserInteractor $interactor)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users')->ignore($id),
-            ],
-            'password' => 'nullable|string|min:8',
-        ]);
+
+        $userRequest = UserRequest::validateAndCreate(request());
 
         $user = User::findOrFail($id);
-
-        $user->name = $request->name;
-        $user->email = $request->email;
-
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-
-        $user->save();
-
-        $user->syncRoles($request->role);
+        $interactor->execute($user, $userRequest);
 
         return to_route("users.index")->with('success', 'User updated successfully');
-
-        // dd($request->role);
     }
+
+
+
+
+
+    // public function update(Request $request, string $id)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'email' => [
+    //             'required',
+    //             'string',
+    //             'email',
+    //             'max:255',
+    //             Rule::unique('users')->ignore($id),
+    //         ],
+    //         'password' => 'nullable|string|min:8',
+    //     ]);
+
+    //     $user = User::findOrFail($id);
+
+    //     $user->name = $request->name;
+    //     $user->email = $request->email;
+
+    //     if ($request->filled('password')) {
+    //         $user->password = Hash::make($request->password);
+    //     }
+
+    //     $user->save();
+
+    //     $user->syncRoles($request->role);
+
+    //     return to_route("users.index")->with('success', 'User updated successfully');
+
+    //     // dd($request->role);
+    // }
 
     /**
      * Remove the specified resource from storage.

@@ -175,14 +175,23 @@ form {
         :show="isEditModalOpen"
         :roles="props.roles"
         @close="isEditModalOpen = false"
-        @updated="handleUserUpdate"
+        @submit="handleEditUserSubmit"
     />
+
+    <!-- <EditUserModal
+        v-if="selectedUser"
+        :user="selectedUser"
+        :show="isEditModalOpen"
+        :roles="props.roles"
+        @close="isEditModalOpen = false"
+        @updated="handleUserUpdate"
+    /> -->
 
     <CreateUserModal
         :show="isTestModalOpen"
         :roles="props.roles"
         @close="isTestModalOpen = false"
-        @created="handleUserUpdate"
+        @submit="handleCreateUser"
     />
 
     <ShowUserModal
@@ -252,37 +261,75 @@ const users = ref([]);
 const search = ref("");
 const loading = ref(false);
 
-// Load users on component mount
 onMounted(() => {
     loadUsers();
 });
 
-// Watch for search changes
-watch(
-    search,
-    debounce((q) => {
-        loadUsers(q);
-    }, 500)
-);
+// Utility function to format users with is_online flag
+const formatUsers = (allUsers) => {
+    const loggedInIds = loggedInUsers.value.map((u) => u.id);
+    return allUsers.map((user) => ({
+        ...user,
+        is_online: loggedInIds.includes(user.id),
+    }));
+};
 
-const loadUsers = async (searchQuery = "") => {
+const loadUsers = async () => {
     try {
-        const response = await axios.get("/api/users", {
-            params: { search: searchQuery },
-        });
-
-        const allUsers = response.data.data;
-
-        const loggedInIds = loggedInUsers.value.map((u) => u.id);
-
-        users.value = allUsers.map((user) => ({
-            ...user,
-            is_online: loggedInIds.includes(user.id),
-        }));
+        const response = await axios.get("/api/users");
+        users.value = formatUsers(response.data.data);
     } catch (error) {
         console.error("Error loading users:", error);
     }
 };
+
+const searchUsers = async (query) => {
+    try {
+        const response = await axios.get("/api/users", {
+            params: { search: query },
+        });
+        users.value = formatUsers(response.data.data);
+    } catch (error) {
+        console.error("Error searching users:", error);
+    }
+};
+
+watch(
+    search,
+    debounce((q) => {
+        if (q) {
+            searchUsers(q);
+        } else {
+            loadUsers();
+        }
+    }, 500)
+);
+
+// watch(
+//     search,
+//     debounce((q) => {
+//         loadUsers(q);
+//     }, 500)
+// );
+
+// const loadUsers = async (searchQuery = "") => {
+//     try {
+//         const response = await axios.get("/api/users", {
+//             params: { search: searchQuery },
+//         });
+
+//         const allUsers = response.data.data;
+
+//         const loggedInIds = loggedInUsers.value.map((u) => u.id);
+
+//         users.value = allUsers.map((user) => ({
+//             ...user,
+//             is_online: loggedInIds.includes(user.id),
+//         }));
+//     } catch (error) {
+//         console.error("Error loading users:", error);
+//     }
+// };
 
 const toggleBlockUser = async (user) => {
     try {
@@ -355,5 +402,48 @@ const openShowModal = (user) => {
 const closeShowModal = () => {
     showUserModal.value = false;
     selectedUser.value = null;
+};
+
+const handleCreateUser = async (formData) => {
+    try {
+        const response = await axios.post(route("users.store"), formData);
+        alert("User created successfully!");
+        loadUsers();
+        isTestModalOpen.value = false;
+    } catch (error) {
+        console.error("Error creating user:", error);
+
+        if (error.response && error.response.status === 422) {
+            alert("Validation failed. Please check your input.");
+        } else {
+            alert("An unexpected error occurred.");
+        }
+    }
+};
+
+const handleEditUserSubmit = async (formData) => {
+    if (!selectedUser.value || !selectedUser.value.id) {
+        console.error("User ID is missing", selectedUser.value);
+        alert("User ID not found.");
+        return;
+    }
+
+    const url = `/users/${selectedUser.value.id}`;
+
+    try {
+        await axios.put(url, formData);
+        alert("User updated successfully!");
+
+        isEditModalOpen.value = false;
+        selectedUser.value = null;
+        loadUsers();
+    } catch (error) {
+        console.error("Error updating user:", error);
+        if (error.response && error.response.status === 422) {
+            alert("Validation failed. Please check your input.");
+        } else {
+            alert("Failed to update user.");
+        }
+    }
 };
 </script>
