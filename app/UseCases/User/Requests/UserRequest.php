@@ -19,7 +19,6 @@ class UserRequest extends Data
     #[SpatieRule('required'), Max(255)]
     public string $name;
 
-    // Make password optional (nullable instead of required)
     #[SpatieRule('nullable'), Min(8), Confirmed]
     public ?string $password;
 

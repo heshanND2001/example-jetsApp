@@ -19,6 +19,7 @@
             </li>
             <li>
                 <NavLink
+                    v-if="can('users.view')"
                     :href="route('users.index')"
                     :active="route().current('users.index')"
                 >

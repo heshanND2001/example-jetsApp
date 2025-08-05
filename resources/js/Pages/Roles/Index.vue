@@ -81,7 +81,17 @@
         :permissions="allPermissions"
         :rolePermissions="selectedRolePermissions"
         @close="closeEditModal"
+        @update="handleUpdateRole"
     />
+
+    <!-- <EditRoleModal
+        v-if="selectedRole"
+        :show="showEditModal"
+        :role="selectedRole"
+        :permissions="allPermissions"
+        :rolePermissions="selectedRolePermissions"
+        @close="closeEditModal"
+    /> -->
 
     <ShowRolePermissionModal
         v-if="selectedRole"
@@ -94,7 +104,14 @@
         :show="showCreateModal"
         :permissions="allPermissions"
         @close="closeCreateModal"
+        @create="handleCreateRole"
     />
+
+    <!-- <CreateRoleModal
+        :show="showCreateModal"
+        :permissions="allPermissions"
+        @close="closeCreateModal"
+    /> -->
 </template>
 
 <script setup>
@@ -106,6 +123,8 @@ import EditRoleModal from "./Components/EditRoleModal.vue";
 import ShowRolePermissionModal from "./Components/ShowRolePermissionModal.vue";
 import CreateRoleModal from "./Components/CreateRoleModal.vue";
 import BaseButton from "@/Components/BaseButton.vue";
+
+import { useForm } from "@inertiajs/vue3";
 
 import BaseTable from "@/Components/TableComponent/BaseTable.vue";
 import TableHeader from "@/Components/TableComponent/TableHeader.vue";
@@ -160,5 +179,34 @@ const confirmDelete = (id) => {
             onError: (errors) => console.error("Error deleting role:", errors),
         });
     }
+};
+
+const handleCreateRole = (data) => {
+    const form = useForm({
+        name: data.name,
+        permissions: data.permissions,
+    });
+
+    form.post(route("roles.store"), {
+        onSuccess: () => {
+            closeCreateModal();
+        },
+    });
+};
+
+const handleUpdateRole = (data) => {
+    const form = useForm({
+        name: data.name,
+        permissions: data.permissions,
+    });
+
+    form.put(route("roles.update", data.id), {
+        onSuccess: () => {
+            closeEditModal();
+        },
+        onError: (errors) => {
+            console.error("Error updating role:", errors);
+        },
+    });
 };
 </script>
